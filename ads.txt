@@ -1,2 +1,1 @@
-# Add the exact ads.txt line supplied inside your Google AdSense account after approval.
-# Do not guess or copy another publisher's identifier.
+google.com, pub-8425145226755967, DIRECT, f08c47fec0942fa0
