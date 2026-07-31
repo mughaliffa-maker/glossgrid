@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://glossgrid.pages.dev/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collections/</loc></url>
   <url><loc>https://glossgrid.pages.dev/explore/</loc></url>
   <url><loc>https://glossgrid.pages.dev/finder/</loc></url>
   <url><loc>https://glossgrid.pages.dev/about/</loc></url>
@@ -9,4 +10,14 @@
   <url><loc>https://glossgrid.pages.dev/copyright/</loc></url>
   <url><loc>https://glossgrid.pages.dev/privacy/</loc></url>
   <url><loc>https://glossgrid.pages.dev/terms/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/summer-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/pink-minimal-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/breezy-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/minimal-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/short-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/french-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/vacation-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/wedding-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/autumn-nails/</loc></url>
+  <url><loc>https://glossgrid.pages.dev/collection/winter-nails/</loc></url>
 </urlset>

@@ -34,3 +34,18 @@ This is plain static HTML. Use:
 - Production branch: `main`
 
 See `GITHUB-CLOUDFLARE-STEPS.md` for exact instructions.
+
+## Collection-led Pinterest upgrade
+
+This package now includes:
+
+- `/collections/` — collection library
+- `/collection/<slug>/` — complete collection landing pages
+- 24-item progressive loading for collections containing 50–100 designs
+- Search and shape/length/color filtering inside each collection
+- Collection links preserved when opening design detail pages
+- Automatic collection membership based on design metadata
+- Support for multiple colors, seasons, occasions and styles per design
+- Pinterest landing-page messaging
+
+Read `PINTEREST-COLLECTION-WORKFLOW.md` before adding your full image library.

@@ -256,3 +256,60 @@ img { display: block; width: 100%; }
   .save-btn { width: 37px; height: 37px; }
   .option-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* Collection-led Pinterest landing pages */
+.collection-card-rich .collection-copy small { display:block; margin-top:7px; font-size:.72rem; opacity:.78; letter-spacing:.02em; }
+.collection-library-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+.collection-library-grid .collection-card { min-height:420px; }
+.collection-total { display:inline-flex; margin-top:18px; padding:9px 14px; border:1px solid var(--line); border-radius:999px; font-size:.84rem; }
+.collection-hero-section { padding:38px 0 18px; }
+.collection-landing-hero { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); min-height:610px; border-radius:34px; overflow:hidden; background:#171416; color:#fff; }
+.collection-landing-copy { padding:clamp(34px,6vw,78px); display:flex; flex-direction:column; justify-content:center; }
+.collection-landing-copy h1 { font-size:clamp(3.6rem,7vw,7rem); line-height:.91; max-width:10ch; margin:15px 0 22px; }
+.collection-landing-copy > p { max-width:620px; color:rgba(255,255,255,.72); font-size:1.08rem; line-height:1.7; }
+.collection-landing-image { position:relative; min-height:520px; overflow:hidden; }
+.collection-landing-image img { width:100%; height:100%; object-fit:cover; }
+.collection-landing-image::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(23,20,22,.24),transparent 35%); pointer-events:none; }
+.collection-stats { display:flex; align-items:baseline; gap:10px; margin:28px 0 20px; }
+.collection-stats strong { font-family:Georgia,serif; font-size:2.6rem; font-weight:500; }
+.collection-stats span { font-size:.84rem; color:rgba(255,255,255,.62); }
+.tag-row { display:flex; flex-wrap:wrap; gap:8px; }
+.tag-pill { display:inline-flex; align-items:center; min-height:34px; padding:7px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.07); color:inherit; font-size:.78rem; }
+.tag-link { border-color:var(--line); background:var(--warm-white); color:var(--ink); transition:.2s ease; }
+.tag-link:hover { transform:translateY(-1px); border-color:var(--ink); }
+.pin-promise { position:absolute; z-index:2; right:20px; bottom:20px; max-width:240px; padding:17px 18px; background:rgba(251,248,245,.94); color:var(--ink); border-radius:18px; backdrop-filter:blur(10px); }
+.pin-promise span { display:block; font-size:.73rem; text-transform:uppercase; letter-spacing:.12em; margin-bottom:5px; opacity:.6; }
+.pin-promise strong { font-family:Georgia,serif; font-size:1.2rem; font-weight:500; }
+.breadcrumb-link { display:inline-flex; width:max-content; margin-bottom:25px; color:rgba(255,255,255,.66); font-size:.84rem; }
+.breadcrumb-link:hover { color:#fff; }
+.collection-introduction .section-head { padding-top:28px; }
+.collection-introduction h2 { max-width:12ch; }
+.collection-introduction p { align-self:end; }
+.collection-controls { grid-template-columns:minmax(220px,1.8fr) repeat(4,minmax(130px,1fr)); }
+.load-more-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; min-height:110px; padding-top:18px; }
+.back-collection { display:inline-flex; margin:28px 0 6px; color:var(--muted); font-size:.88rem; }
+.back-collection:hover { color:var(--ink); }
+.design-collections { padding:10px 0 12px; }
+.design-collections h2 { font-family:Georgia,serif; font-size:2rem; font-weight:500; margin:7px 0 15px; }
+.design-collections .tag-row { margin-bottom:10px; }
+
+@media (max-width: 980px) {
+  .collection-library-grid { grid-template-columns:repeat(2,1fr); }
+  .collection-landing-hero { grid-template-columns:1fr; }
+  .collection-landing-copy { min-height:460px; }
+  .collection-landing-image { min-height:440px; }
+  .collection-controls { grid-template-columns:repeat(2,1fr); }
+  .collection-controls .search-input { grid-column:1/-1; }
+}
+@media (max-width: 620px) {
+  .collection-library-grid { grid-template-columns:1fr 1fr; gap:10px; }
+  .collection-library-grid .collection-card { min-height:250px; }
+  .collection-hero-section { padding:18px 0 10px; }
+  .collection-landing-hero { border-radius:22px; }
+  .collection-landing-copy { min-height:auto; padding:38px 24px 34px; }
+  .collection-landing-copy h1 { font-size:3.7rem; }
+  .collection-landing-image { min-height:370px; }
+  .pin-promise { left:14px; right:14px; bottom:14px; max-width:none; }
+  .collection-controls { grid-template-columns:1fr 1fr; gap:9px; }
+  .collection-controls .search-input { grid-column:1/-1; }
+}

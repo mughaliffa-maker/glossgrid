@@ -1,7 +1,7 @@
 (() => {
   const config = window.GLOSSGRID_CONFIG || {};
   const designs = window.GLOSSGRID_DESIGNS || [];
-  const base = document.body.dataset.page === 'home' ? '' : '../';
+  const collections = window.GLOSSGRID_COLLECTIONS || [];
   const savedKey = 'glossgrid-saved';
 
   const icon = (name, size = 20) => {
@@ -45,8 +45,14 @@
     document.querySelectorAll('.saved-count').forEach(el => el.textContent = count);
   };
 
-  const pathTo = (path) => `${base}${path}`;
-  const designUrl = slug => `${pathTo('design/')}?slug=${encodeURIComponent(slug)}`;
+  const pathTo = (path = '') => `/${String(path).replace(/^\//, '')}`;
+  const designUrl = (slug, fromCollection = '') => `${pathTo('design/')}?slug=${encodeURIComponent(slug)}${fromCollection ? `&from=${encodeURIComponent(fromCollection)}` : ''}`;
+  const collectionUrl = slug => `${pathTo('collection/')}${encodeURIComponent(slug)}/`;
+  const valueList = (d, key) => Array.isArray(d?.[key]) ? d[key] : (d?.[key] ? [d[key]] : []);
+  const valueText = (d, key) => valueList(d, key).join(', ');
+  const primaryValue = (d, key) => valueList(d, key)[0] || '';
+  const hasValue = (d, key, value) => !value || valueList(d, key).includes(value);
+  const sharesValue = (a, b, key) => valueList(a, key).some(v => valueList(b, key).includes(v));
 
   function header() {
     const target = document.querySelector('[data-site-header]');
@@ -60,10 +66,10 @@
             <span>${config.brand || 'GlossGrid'}</span>
           </a>
           <nav class="desktop-nav" aria-label="Main navigation">
-            <a href="${pathTo('explore/')}">Discover</a>
+            <a href="${pathTo('collections/')}">Collections</a>
+            <a href="${pathTo('explore/')}">All Designs</a>
             <a href="${pathTo('finder/')}">Nail Finder</a>
-            <a href="${pathTo('explore/')}?season=Summer">Summer</a>
-            <a href="${pathTo('explore/')}?style=French">French</a>
+            <a href="${collectionUrl('summer-nails')}">Summer</a>
             <a href="${pathTo('about/')}">About</a>
           </nav>
           <div class="nav-actions">
@@ -74,11 +80,12 @@
         </div>
       </header>
       <nav class="mobile-menu" aria-label="Mobile navigation">
-        <a href="${pathTo('explore/')}">Discover</a>
+        <a href="${pathTo('collections/')}">Browse Collections</a>
+        <a href="${pathTo('explore/')}">All Designs</a>
         <a href="${pathTo('finder/')}">Nail Finder</a>
-        <a href="${pathTo('explore/')}?season=Summer">Summer Nails</a>
-        <a href="${pathTo('explore/')}?length=Short">Short Nails</a>
-        <a href="${pathTo('explore/')}?occasion=Wedding">Wedding Nails</a>
+        <a href="${collectionUrl('summer-nails')}">Summer Nails</a>
+        <a href="${collectionUrl('pink-minimal-nails')}">Pink Minimal Nails</a>
+        <a href="${collectionUrl('short-nails')}">Short Nails</a>
         <a href="${pathTo('saved/')}">Saved Designs</a>
       </nav>`;
 
@@ -103,7 +110,7 @@
               <a class="logo" href="${pathTo('')}"><span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>${config.brand || 'GlossGrid'}</span></a>
               <p class="muted" style="max-width:360px">A visual nail-idea library built to help you find, save and clearly request your next manicure.</p>
             </div>
-            <div class="footer-links"><h3>Discover</h3><a href="${pathTo('explore/')}">All designs</a><a href="${pathTo('finder/')}">Nail Finder</a><a href="${pathTo('explore/')}?season=Summer">Summer nails</a><a href="${pathTo('saved/')}">Saved designs</a></div>
+            <div class="footer-links"><h3>Discover</h3><a href="${pathTo('collections/')}">Collections</a><a href="${pathTo('explore/')}">All designs</a><a href="${pathTo('finder/')}">Nail Finder</a><a href="${collectionUrl('summer-nails')}">Summer nails</a><a href="${pathTo('saved/')}">Saved designs</a></div>
             <div class="footer-links"><h3>Company</h3><a href="${pathTo('about/')}">About</a><a href="${pathTo('contact/')}">Contact</a><a href="${pathTo('editorial-policy/')}">Editorial policy</a><a href="${pathTo('copyright/')}">Image & copyright policy</a></div>
             <div class="footer-links"><h3>Legal</h3><a href="${pathTo('privacy/')}">Privacy policy</a><a href="${pathTo('terms/')}">Terms of use</a><a href="${config.pinterestUrl || '#'}" rel="noopener">Pinterest</a></div>
           </div>
@@ -121,14 +128,14 @@
     window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
   }
 
-  function card(d) {
+  function card(d, fromCollection = '') {
     const saved = isSaved(d.slug);
     return `<article class="design-card">
       <div class="design-image">
-        <a href="${designUrl(d.slug)}" aria-label="View ${escapeHtml(d.title)}"><img src="${d.image}" alt="${escapeHtml(d.title)}" loading="lazy" referrerpolicy="no-referrer"></a>
+        <a href="${designUrl(d.slug, fromCollection)}" aria-label="View ${escapeHtml(d.title)}"><img src="${d.image}" alt="${escapeHtml(d.title)}" loading="lazy" referrerpolicy="no-referrer"></a>
         <button class="save-btn ${saved ? 'saved' : ''}" data-save="${d.slug}" type="button" aria-label="${saved ? 'Remove from saved designs' : 'Save design'}">${saved ? icon('heartFill') : icon('heart')}</button>
       </div>
-      <div class="design-meta"><h3><a href="${designUrl(d.slug)}">${escapeHtml(d.title)}</a></h3><div class="meta-row"><span>${d.shape}</span><span>${d.length}</span><span>${d.color}</span></div></div>
+      <div class="design-meta"><h3><a href="${designUrl(d.slug, fromCollection)}">${escapeHtml(d.title)}</a></h3><div class="meta-row"><span>${primaryValue(d, 'shape')}</span><span>${primaryValue(d, 'length')}</span><span>${primaryValue(d, 'color')}</span></div></div>
     </article>`;
   }
 
@@ -140,17 +147,44 @@
     }));
   }
 
+  function designsForCollection(collection) {
+    if (!collection) return [];
+    const pinned = (collection.designSlugs || []).map(slug => designs.find(d => d.slug === slug)).filter(Boolean);
+    const pinnedSet = new Set(pinned.map(d => d.slug));
+    const filterEntries = Object.entries(collection.filters || {});
+    const matched = designs.filter(d => {
+      if (!filterEntries.length) return true;
+      const checks = filterEntries.map(([key, accepted]) => {
+        const values = Array.isArray(accepted) ? accepted : [accepted];
+        const actual = Array.isArray(d[key]) ? d[key] : [d[key]];
+        return actual.some(v => values.includes(v));
+      });
+      return collection.matchMode === 'any' ? checks.some(Boolean) : checks.every(Boolean);
+    }).filter(d => !pinnedSet.has(d.slug));
+    return [...pinned, ...matched];
+  }
+
+  function collectionCard(c) {
+    const count = designsForCollection(c).length;
+    return `<a class="collection-card collection-card-rich" href="${collectionUrl(c.slug)}">
+      <img src="${c.image}" alt="${escapeHtml(c.title)}" loading="lazy" referrerpolicy="no-referrer">
+      <div class="collection-copy"><span>${escapeHtml(c.eyebrow || 'Curated collection')}</span><strong>${escapeHtml(c.shortTitle || c.title)}</strong><small>${count} design${count === 1 ? '' : 's'} · Full collection</small></div>
+    </a>`;
+  }
+
   function renderHome() {
     if (document.body.dataset.page !== 'home') return;
     const featured = document.querySelector('[data-featured-designs]');
     if (featured) { featured.innerHTML = designs.slice(0, 8).map(card).join(''); attachSaveButtons(featured); }
+    const collectionGrid = document.querySelector('[data-home-collections]');
+    if (collectionGrid) collectionGrid.innerHTML = collections.slice(0, 8).map(collectionCard).join('');
     document.querySelectorAll('[data-quick-filter]').forEach(el => el.addEventListener('click', () => {
       const [key, value] = el.dataset.quickFilter.split(':');
       location.href = `${pathTo('explore/')}?${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     }));
   }
 
-  function unique(key) { return [...new Set(designs.map(d => d[key]).filter(Boolean))].sort(); }
+  function unique(key) { return [...new Set(designs.flatMap(d => valueList(d, key)).filter(Boolean))].sort(); }
   function optionList(values, current, label) { return `<option value="">${label}</option>${values.map(v => `<option ${v === current ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('')}`; }
 
   function renderExplore() {
@@ -177,9 +211,9 @@
     const form = document.querySelector('[data-filters]');
     const values = Object.fromEntries([...form.querySelectorAll('input,select')].map(el => [el.name, el.value.trim()]));
     let result = designs.filter(d => {
-      const hay = `${d.title} ${d.summary} ${d.color} ${d.shape} ${d.length} ${d.season} ${d.occasion} ${d.style} ${d.finish}`.toLowerCase();
+      const hay = `${d.title} ${d.summary} ${['color','shape','length','season','occasion','style','finish'].flatMap(k => valueList(d,k)).join(' ')}`.toLowerCase();
       if (values.q && !hay.includes(values.q.toLowerCase())) return false;
-      return ['color','shape','length','season','occasion','style'].every(k => !values[k] || d[k] === values[k]);
+      return ['color','shape','length','season','occasion','style'].every(k => hasValue(d, k, values[k]));
     });
     const query = new URLSearchParams();
     Object.entries(values).forEach(([k,v]) => { if (v) query.set(k,v); });
@@ -220,7 +254,7 @@
   }
 
   function showFinderResults(answers, cardEl) {
-    const scored = designs.map(d => ({ d, score: Object.entries(answers).reduce((s,[k,v]) => s + (d[k] === v ? 2 : 0), 0) })).sort((a,b) => b.score - a.score);
+    const scored = designs.map(d => ({ d, score: Object.entries(answers).reduce((s,[k,v]) => s + (hasValue(d,k,v) ? 2 : 0), 0) })).sort((a,b) => b.score - a.score);
     const top = scored.slice(0, 6).map(x => x.d);
     document.querySelector('[data-step-text]').textContent = 'Your result';
     document.querySelector('[data-progress]').style.width = '100%';
@@ -248,20 +282,22 @@
     if (document.body.dataset.page !== 'design') return;
     const slug = new URLSearchParams(location.search).get('slug');
     const d = designs.find(item => item.slug === slug) || designs[0];
+    const fromSlug = new URLSearchParams(location.search).get('from');
+    const fromCollection = collections.find(c => c.slug === fromSlug);
     document.title = `${d.title} | ${config.brand}`;
     document.querySelector('meta[name="description"]')?.setAttribute('content', d.summary);
     const root = document.querySelector('[data-design-detail]');
     const saved = isSaved(d.slug);
-    root.innerHTML = `<div class="detail-layout">
+    root.innerHTML = `${fromCollection ? `<a class="back-collection" href="${collectionUrl(fromCollection.slug)}">← Back to ${escapeHtml(fromCollection.shortTitle || fromCollection.title)}</a>` : ''}<div class="detail-layout">
       <div class="detail-image-wrap"><div class="detail-image"><img src="${d.image}" alt="${escapeHtml(d.title)}" referrerpolicy="no-referrer"></div><div class="credit">Demo image: <a href="${d.source}" rel="noopener">${escapeHtml(d.credit)}</a></div></div>
-      <div class="detail-copy"><span class="eyebrow">${d.season} · ${d.style}</span><h1 class="display">${escapeHtml(d.title)}</h1><p class="muted" style="font-size:1.08rem">${escapeHtml(d.summary)}</p>
+      <div class="detail-copy"><span class="eyebrow">${valueText(d, 'season')} · ${valueText(d, 'style')}</span><h1 class="display">${escapeHtml(d.title)}</h1><p class="muted" style="font-size:1.08rem">${escapeHtml(d.summary)}</p>
       <div class="detail-actions"><button class="btn ${saved ? 'btn-primary' : 'btn-secondary'}" type="button" data-detail-save data-save="${d.slug}">${saved ? icon('heartFill') : icon('heart')} ${saved ? 'Saved' : 'Save design'}</button><button class="btn btn-secondary" type="button" data-share>${icon('share')} Share</button></div>
-      <div class="spec-grid">${[['Color',d.color],['Shape',d.shape],['Length',d.length],['Finish',d.finish],['Difficulty',d.difficulty],['Maintenance',d.maintenance]].map(([k,v]) => `<div class="spec"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div>
+      <div class="spec-grid">${[['Color',valueText(d,'color')],['Shape',valueText(d,'shape')],['Length',valueText(d,'length')],['Finish',valueText(d,'finish')],['Difficulty',d.difficulty],['Maintenance',d.maintenance]].map(([k,v]) => `<div class="spec"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div>
       <div class="salon-brief"><span class="eyebrow" style="color:#f1d9dd">Copyable salon brief</span><p>${escapeHtml(d.salonBrief)}</p><button class="btn btn-secondary btn-sm" type="button" data-copy-brief>${icon('copy',17)} Copy brief</button><span class="copy-status" data-copy-status></span></div>
       <div class="info-block"><h2>Why this design works</h2><p class="muted">${escapeHtml(d.why)}</p></div>
-      <div class="info-block"><h2>Best suited to</h2><p class="muted">${d.length} ${d.shape.toLowerCase()} nails, ${d.occasion.toLowerCase()} plans and anyone looking for a ${d.style.toLowerCase()} ${d.finish.toLowerCase()} finish.</p></div>
+      <div class="info-block"><h2>Best suited to</h2><p class="muted">${valueText(d,'length')} ${primaryValue(d,'shape').toLowerCase()} nails, ${valueText(d,'occasion').toLowerCase()} plans and anyone looking for a ${valueText(d,'style').toLowerCase()} ${valueText(d,'finish').toLowerCase()} finish.</p></div>
       <div class="info-block"><h2>Make it simpler</h2><p class="muted">Keep the same base color and shape, remove accent details and ask for one uniform finish across all ten nails.</p></div>
-      </div></div><section class="section-sm"><div class="section-head"><div><span class="eyebrow">Keep browsing</span><h2 class="display">Similar ideas</h2></div><a class="link-arrow" href="${pathTo('explore/')}?color=${encodeURIComponent(d.color)}">More ${d.color.toLowerCase()} nails</a></div><div class="design-grid" data-similar></div></section>`;
+      </div></div>${(() => { const memberships = collections.filter(c => designsForCollection(c).some(x => x.slug === d.slug)).slice(0,5); return memberships.length ? `<section class="design-collections"><span class="eyebrow">Browse the full edits</span><h2>This design appears in</h2><div class="tag-row">${memberships.map(c => `<a class="tag-pill tag-link" href="${collectionUrl(c.slug)}">${escapeHtml(c.shortTitle || c.title)}</a>`).join('')}</div></section>` : ''; })()}<section class="section-sm"><div class="section-head"><div><span class="eyebrow">Keep browsing</span><h2 class="display">Similar ideas</h2></div><a class="link-arrow" href="${pathTo('explore/')}?color=${encodeURIComponent(primaryValue(d,'color'))}">More ${primaryValue(d,'color').toLowerCase()} nails</a></div><div class="design-grid" data-similar></div></section>`;
     attachSaveButtons(root);
     const detailBtn = root.querySelector('[data-detail-save]');
     detailBtn.addEventListener('click', () => setTimeout(() => { const now = isSaved(d.slug); detailBtn.className = `btn ${now ? 'btn-primary' : 'btn-secondary'}`; detailBtn.innerHTML = `${now ? icon('heartFill') : icon('heart')} ${now ? 'Saved' : 'Save design'}`; }, 0));
@@ -273,8 +309,69 @@
       const payload = { title: d.title, text: d.summary, url: location.href };
       if (navigator.share) await navigator.share(payload).catch(() => {}); else { await navigator.clipboard.writeText(location.href); toast('Page link copied'); }
     });
-    const similar = designs.filter(x => x.slug !== d.slug && (x.color === d.color || x.style === d.style || x.occasion === d.occasion)).slice(0,4);
+    const similar = designs.filter(x => x.slug !== d.slug && (sharesValue(x,d,'color') || sharesValue(x,d,'style') || sharesValue(x,d,'occasion'))).slice(0,4);
     const simEl = root.querySelector('[data-similar]'); simEl.innerHTML = similar.map(card).join(''); attachSaveButtons(simEl);
+  }
+
+  function renderCollections() {
+    if (document.body.dataset.page !== 'collections') return;
+    const grid = document.querySelector('[data-collections-grid]');
+    const count = document.querySelector('[data-collection-total]');
+    if (count) count.textContent = `${collections.length} curated collections`;
+    if (grid) grid.innerHTML = collections.map(collectionCard).join('');
+  }
+
+  function renderCollection() {
+    if (document.body.dataset.page !== 'collection') return;
+    const params = new URLSearchParams(location.search);
+    const pathMatch = location.pathname.match(/\/collection\/([^/]+)\/?$/);
+    const slug = params.get('slug') || (pathMatch ? decodeURIComponent(pathMatch[1]) : '');
+    const collection = collections.find(c => c.slug === slug) || collections[0];
+    if (!collection) return;
+    let collectionDesigns = designsForCollection(collection);
+    document.title = `${collection.title} | ${config.brand}`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', collection.seoDescription || collection.description);
+    const hero = document.querySelector('[data-collection-hero]');
+    hero.innerHTML = `<div class="collection-landing-hero">
+      <div class="collection-landing-copy"><a class="breadcrumb-link" href="${pathTo('collections/')}">Collections</a><span class="eyebrow">${escapeHtml(collection.eyebrow || 'Curated collection')}</span><h1 class="display">${escapeHtml(collection.title)}</h1><p>${escapeHtml(collection.description)}</p><div class="collection-stats"><strong>${collectionDesigns.length}</strong><span>designs in this collection</span></div><div class="tag-row">${(collection.tags || []).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}</div></div>
+      <div class="collection-landing-image"><img src="${collection.image}" alt="${escapeHtml(collection.title)}" referrerpolicy="no-referrer"><div class="pin-promise"><span>Seen it on Pinterest?</span><strong>This is the full collection.</strong></div></div>
+    </div>`;
+
+    const intro = document.querySelector('[data-collection-intro]');
+    intro.innerHTML = `<div><span class="eyebrow">Browse, save, then open</span><h2 class="display">${escapeHtml(collection.introTitle || 'Explore the full collection')}</h2></div><p class="muted">${escapeHtml(collection.introText || 'Open any design for its complete salon details and related ideas.')}</p>`;
+
+    const controls = document.querySelector('[data-collection-controls]');
+    const values = key => [...new Set(collectionDesigns.flatMap(d => valueList(d,key)).filter(Boolean))].sort();
+    controls.innerHTML = `<input class="search-input" type="search" name="q" placeholder="Search inside this collection" aria-label="Search this collection"><select class="select" name="shape">${optionList(values('shape'), '', 'All shapes')}</select><select class="select" name="length">${optionList(values('length'), '', 'All lengths')}</select><select class="select" name="color">${optionList(values('color'), '', 'All colors')}</select><select class="select" name="sort"><option value="curated">Curated order</option><option value="title">A–Z</option></select>`;
+
+    let shown = 24;
+    const grid = document.querySelector('[data-collection-grid]');
+    const count = document.querySelector('[data-collection-result-count]');
+    const loadWrap = document.querySelector('[data-load-wrap]');
+    const update = () => {
+      const q = (controls.querySelector('[name=q]').value || '').trim().toLowerCase();
+      const shape = controls.querySelector('[name=shape]').value;
+      const length = controls.querySelector('[name=length]').value;
+      const color = controls.querySelector('[name=color]').value;
+      const sort = controls.querySelector('[name=sort]').value;
+      let result = collectionDesigns.filter(d => {
+        const hay = [d.title,d.summary,...['color','shape','length','style','occasion','finish'].flatMap(k => valueList(d,k))].join(' ').toLowerCase();
+        return (!q || hay.includes(q)) && hasValue(d,'shape',shape) && hasValue(d,'length',length) && hasValue(d,'color',color);
+      });
+      if (sort === 'title') result = [...result].sort((a,b) => a.title.localeCompare(b.title));
+      count.textContent = `${result.length} design${result.length === 1 ? '' : 's'}`;
+      grid.innerHTML = result.slice(0, shown).map(d => card(d, collection.slug)).join('') || `<div class="empty-state"><span class="eyebrow">No exact match</span><h2 class="display" style="font-size:2.6rem;margin:8px 0">Try a wider filter.</h2></div>`;
+      attachSaveButtons(grid);
+      const remaining = result.length - shown;
+      loadWrap.innerHTML = remaining > 0 ? `<button class="btn btn-secondary" type="button" data-load-more>Show ${Math.min(24, remaining)} more designs</button><span class="muted">${shown} of ${result.length} shown</span>` : result.length ? `<span class="muted">You reached the end of this collection.</span>` : '';
+      loadWrap.querySelector('[data-load-more]')?.addEventListener('click', () => { shown += 24; update(); });
+    };
+    controls.querySelectorAll('input,select').forEach(el => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', () => { shown = 24; update(); }));
+    update();
+
+    const related = collections.filter(c => c.slug !== collection.slug).slice(0,4);
+    const relatedGrid = document.querySelector('[data-related-collections]');
+    if (relatedGrid) relatedGrid.innerHTML = related.map(collectionCard).join('');
   }
 
   function newsletterForms() {
@@ -291,5 +388,5 @@
   function escapeHtml(value='') { return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 
-  header(); footer(); renderHome(); renderExplore(); renderFinder(); renderSaved(); renderDesign(); newsletterForms();
+  header(); footer(); renderHome(); renderCollections(); renderCollection(); renderExplore(); renderFinder(); renderSaved(); renderDesign(); newsletterForms();
 })();
