@@ -83,9 +83,9 @@
         <a href="${pathTo('collections/')}">Browse Collections</a>
         <a href="${pathTo('explore/')}">All Designs</a>
         <a href="${pathTo('finder/')}">Nail Finder</a>
-        <a href="${collectionUrl('summer-nails')}">Summer Nails</a>
-        <a href="${collectionUrl('pink-minimal-nails')}">Pink Minimal Nails</a>
-        <a href="${collectionUrl('short-nails')}">Short Nails</a>
+        <a href="${collectionUrl('pink-nails')}">Pink Nails</a>
+        <a href="${collectionUrl('white-nails')}">White Nails</a>
+        <a href="${collectionUrl('bridal-nails')}">Bridal Nails</a>
         <a href="${pathTo('saved/')}">Saved Designs</a>
       </nav>`;
 
@@ -114,7 +114,7 @@
             <div class="footer-links"><h3>Company</h3><a href="${pathTo('about/')}">About</a><a href="${pathTo('contact/')}">Contact</a><a href="${pathTo('editorial-policy/')}">Editorial policy</a><a href="${pathTo('copyright/')}">Image & copyright policy</a></div>
             <div class="footer-links"><h3>Legal</h3><a href="${pathTo('privacy/')}">Privacy policy</a><a href="${pathTo('terms/')}">Terms of use</a><a href="${config.pinterestUrl || '#'}" rel="noopener">Pinterest</a></div>
           </div>
-          <div class="footer-bottom"><span>© ${new Date().getFullYear()} ${config.brand || 'GlossGrid'}. All rights reserved.</span><span>Demo images are credited to their respective Pexels contributors.</span></div>
+          <div class="footer-bottom"><span>© ${new Date().getFullYear()} ${config.brand || 'GlossGrid'}. All rights reserved.</span><span>Curated nail collections with individual salon-ready design pages.</span></div>
         </div>
       </footer><div class="toast" role="status" aria-live="polite"></div>`;
   }
@@ -289,7 +289,7 @@
     const root = document.querySelector('[data-design-detail]');
     const saved = isSaved(d.slug);
     root.innerHTML = `${fromCollection ? `<a class="back-collection" href="${collectionUrl(fromCollection.slug)}">← Back to ${escapeHtml(fromCollection.shortTitle || fromCollection.title)}</a>` : ''}<div class="detail-layout">
-      <div class="detail-image-wrap"><div class="detail-image"><img src="${d.image}" alt="${escapeHtml(d.title)}" referrerpolicy="no-referrer"></div><div class="credit">Demo image: <a href="${d.source}" rel="noopener">${escapeHtml(d.credit)}</a></div></div>
+      <div class="detail-image-wrap"><div class="detail-image"><img src="${d.image}" alt="${escapeHtml(d.title)}" referrerpolicy="no-referrer"></div><div class="credit">${d.source ? `Image: <a href="${d.source}" rel="noopener">${escapeHtml(d.credit)}</a>` : `Image: ${escapeHtml(d.credit || config.brand || 'GlossGrid')}`}</div></div>
       <div class="detail-copy"><span class="eyebrow">${valueText(d, 'season')} · ${valueText(d, 'style')}</span><h1 class="display">${escapeHtml(d.title)}</h1><p class="muted" style="font-size:1.08rem">${escapeHtml(d.summary)}</p>
       <div class="detail-actions"><button class="btn ${saved ? 'btn-primary' : 'btn-secondary'}" type="button" data-detail-save data-save="${d.slug}">${saved ? icon('heartFill') : icon('heart')} ${saved ? 'Saved' : 'Save design'}</button><button class="btn btn-secondary" type="button" data-share>${icon('share')} Share</button></div>
       <div class="spec-grid">${[['Color',valueText(d,'color')],['Shape',valueText(d,'shape')],['Length',valueText(d,'length')],['Finish',valueText(d,'finish')],['Difficulty',d.difficulty],['Maintenance',d.maintenance]].map(([k,v]) => `<div class="spec"><span>${k}</span><strong>${v}</strong></div>`).join('')}</div>
