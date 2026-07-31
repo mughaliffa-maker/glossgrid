@@ -1,51 +1,55 @@
-# GlossGrid Cloudflare Pages Starter
+# GlossGrid — populated Pinterest collection edition
 
-A framework-free, mobile-first nail inspiration website that can be deployed on Cloudflare Pages at no hosting cost.
+This package preserves the existing GlossGrid branding, Nail Finder, filters, saved designs and individual detail pages, while loading the nail assets supplied in the conversation.
 
-## Included
+## Included content
 
-- Editorial homepage
-- Searchable/filterable design library
-- Six-step Nail Finder
-- Browser-based saved collections
-- Dynamic design-detail pages
-- Copyable salon briefs
-- Responsive mobile navigation
-- About, contact, privacy, terms, editorial and copyright pages
-- Cloudflare `_headers` and `_redirects`
-- `robots.txt`, sitemap and AdSense placeholder
+- **339 individual design records**
+- **19 large collections**
+- Local optimized WebP images
+- Pinterest-style collection landing pages
+- Individual salon-detail pages
 
-## Important before public monetization
+## Collection counts
 
-1. Replace the demo brand, email, Pinterest URL and site URL in `assets/data.js`.
-2. Replace demo Pexels assets with original or properly licensed nail-design imagery.
-3. Expand each design with unique, human-reviewed information.
-4. Connect a real email provider; the demo email form only stores locally in the browser.
-5. Add analytics, consent and AdSense only after updating the privacy policy.
-6. Purchase/connect a custom domain before treating the site as a permanent business asset.
+- **Pink Nails:** 124 designs
+- **White Nails:** 137 designs
+- **Bridal Nails:** 121 designs
+- **Summer Nails:** 122 designs
+- **Breezy Nails:** 172 designs
+- **Minimal Nails:** 181 designs
+- **Pink Minimal:** 108 designs
+- **French Nails:** 165 designs
+- **Vacation Nails:** 70 designs
+- **Wedding Nails:** 170 designs
+- **Pop Nails:** 25 designs
+- **Art Nails:** 89 designs
+- **BTS Nails:** 16 designs
+- **Hot Nails:** 44 designs
+- **Red Nails:** 56 designs
+- **Maroon Nails:** 16 designs
+- **Autumn Nails:** 37 designs
+- **Winter Nails:** 72 designs
+- **Short Nails:** 60 designs
 
-## Cloudflare build settings
+## Update the live site
 
-This is plain static HTML. Use:
+1. Extract this ZIP.
+2. Open your existing GitHub repository.
+3. Remove the old site files, then upload everything **inside this folder** to the repository root.
+4. Commit with `Populate nail collections`.
+5. Cloudflare Pages will redeploy automatically.
 
-- Framework preset: None
-- Build command: `exit 0`
-- Build output directory: `.`
-- Production branch: `main`
+The site URL in `assets/data.js` is still `https://glossgrid.pages.dev`. Replace it with your actual live URL when you are ready.
 
-See `GITHUB-CLOUDFLARE-STEPS.md` for exact instructions.
+## Pinterest linking
 
-## Collection-led Pinterest upgrade
+Link a collection Pin directly to its collection path, for example:
 
-This package now includes:
+- `/collection/pink-nails/`
+- `/collection/white-nails/`
+- `/collection/bridal-nails/`
+- `/collection/summer-nails/`
+- `/collection/pink-minimal-nails/`
 
-- `/collections/` — collection library
-- `/collection/<slug>/` — complete collection landing pages
-- 24-item progressive loading for collections containing 50–100 designs
-- Search and shape/length/color filtering inside each collection
-- Collection links preserved when opening design detail pages
-- Automatic collection membership based on design metadata
-- Support for multiple colors, seasons, occasions and styles per design
-- Pinterest landing-page messaging
-
-Read `PINTEREST-COLLECTION-WORKFLOW.md` before adding your full image library.
+A visitor can open any design in the collection to reach the existing design-detail page.

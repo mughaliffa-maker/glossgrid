@@ -1,7 +1,7 @@
-# Demo image credits
+# Image credits and rights notes
 
-The starter website uses remote demonstration images from Pexels. The design data includes visible creator/source credits.
+This package uses the nail images supplied by the site owner in the current project. The site labels them as **GlossGrid collection** images.
 
-Before monetization, replace demo images with your own original photography, commissioned content, or submissions for which you hold written publication rights. Maintain a rights register for every image.
+Before monetization, keep a private record showing whether each image was created, generated, licensed, commissioned or submitted with permission. Public availability on Pinterest or another social platform is not by itself publication permission.
 
-Included source pages include work by PNW Production, Kaboompics, Leeloo The First, Gabriel Puyén, Andrea Mosti, and Gustavo Fring on Pexels.
+The optimized website copies are stored in `assets/images/designs/`.
